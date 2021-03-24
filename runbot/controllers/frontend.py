@@ -7,6 +7,7 @@ import functools
 import werkzeug.utils
 import werkzeug.urls
 
+from collections import defaultdict
 from werkzeug.exceptions import NotFound, Forbidden
 
 from odoo.addons.http_routing.models.ir_http import slug
@@ -383,3 +384,63 @@ class Runbot(Controller):
             'pager': pager
         }
         return request.render('runbot.build_error', qctx)
+
+    @route(['/runbot/build/stats/<int:build_id>'], type='http', auth="public", website=True)
+    def build_stats(self, build_id, search=None, **post):
+        """Build statistics"""
+
+        Build = request.env['runbot.build']
+
+        build = Build.browse([build_id])[0]
+        if not build.exists():
+            return request.not_found()
+
+        build_stats = defaultdict(dict)
+        for stat in build.stat_ids.filtered(lambda rec: '.' in rec.key).sorted(key=lambda  rec: rec.value, reverse=True):
+            category, module = stat.key.split('.', maxsplit=1)
+            value = int(stat.value) if stat.value == int(stat.value) else stat.value
+            build_stats[category].update({module: value})
+
+        context = {
+            'build': build,
+            'build_stats': build_stats,
+            'default_category': request.env['ir.model.data'].xmlid_to_res_id('runbot.default_category'),
+            'project': build.params_id.trigger_id.project_id,
+            'title': 'Build %s statistics' % build.id
+        }
+        return request.render("runbot.build_stats", context)
+
+
+    @route(['/runbot/stats/<int:bundle_id>/<int:trigger_id>/<string:key_category>'], type='json', auth="public", website=False)
+    def stats_json(self, bundle_id, trigger_id, key_category, search=None, **post):
+        """ Json stats """
+        trigger = request.env['runbot.trigger'].browse(trigger_id)
+        bundle = request.env['runbot.bundle'].browse(bundle_id)
+        if not trigger.exists() or not bundle.exists():
+            return request.not_found()
+
+        builds = request.env['runbot.build'].search([
+            ('global_result', '=', 'ok'),
+            ('slot_ids.batch_id.bundle_id', '=', bundle_id),
+            ('params_id.trigger_id', '=', trigger.id),
+        ], order='id desc', limit=25)
+
+        return {build.id : {stat.key.split('.')[1]: stat.value for stat in build.stat_ids if stat.key.startswith(key_category)} for build in builds}
+
+    @route(['/runbot/stats/<string:module>/<string:category>/<int:bundle_id>/<int:params_id>'], type='http', auth="public", website=True)
+    def module_stats(self, module, category, bundle_id, params_id, search=None, **post):
+        """Module statistics"""
+
+        params = request.env['runbot.build.params'].browse(params_id)
+        bundle = request.env['runbot.bundle'].browse(bundle_id)
+        if not params.exists() or not bundle.exists():
+            return request.not_found()
+
+        context = {
+            'category': category,
+            'module': module,
+            'bundle': bundle,
+            'params': params,
+        }
+
+        return request.render("runbot.module_stats", context)

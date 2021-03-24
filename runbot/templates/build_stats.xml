@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <template id="runbot.build_stats">
+      <t t-call='website.layout'>
+          <t t-set="bundles" t-value="build.slot_ids.mapped('batch_id.bundle_id')"/>
+          <div>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="bg-success-light">
+                  <b>Build: </b><a t-attf-href="/runbot/build/{{build.id}}"><t t-esc="build.id"/></a><br/>
+                  <b>Config: </b><t t-esc="build.params_id.config_id.name" /><br/>
+                  <b>Bundle(s): </b>
+                  <t t-foreach="bundles" t-as="bundle">
+                    <a t-attf-href="/runbot/bundle/{{bundle.id}}"><t t-esc="bundle.name" /></a>
+                  </t>
+                </div>
+              </div>
+              <div t-foreach="sorted(build_stats.keys())" t-as="category" class="col-md-4">
+                <h3><t t-esc="category.title().replace('_', ' ')"/></h3>
+                <table class="table table-condensed table-responsive table-stripped">
+                  <tr t-foreach="build_stats[category].keys()" t-as="module">
+                    <td><t t-esc="module"/></td>
+                    <td>
+                      <t t-foreach="bundles" t-as="bundle">
+                        <a t-attf-href="/runbot/stats/{{module}}/{{category}}/{{bundle.id}}/{{build.params_id.id}}" t-attf-title="{{module}} stats in bundle {{bundle.name}}"><i class="fa fa-bar-chart"/></a>
+                      </t>
+                    </td>
+                    <td><t t-esc="build_stats[category][module]"/></td>
+                  </tr>
+                </table>
+              </div>
+              <div t-if="not build_stats" class="col-md-12 alert alert-warning">No stats records found for this build</div>
+            </div>
+          </div>
+      </t>
+    </template>
+
+    <template id="runbot.module_stats">
+      <t t-call='website.layout'>
+        <div class="container">
+        <canvas id="canvas"></canvas>
+          <div class="row">
+            <div class="col-md-4">
+                <div class="bg-success-light">
+                  <b>Bundle:</b><t t-esc="bundle.name"/><br/>
+                  <b>Config:</b><t t-esc="params.config_id.name"/><br/>
+                  <b>Trigger:</b><t t-esc="params.trigger_id.name"/>
+                </div>
+            </div>
+            <div class="col-md-8">
+              <h3><t t-esc="category.title().replace('_', ' ')"/> <t t-esc="module"/></h3>
+              <table class="table table-condensed table-responsive table-stripped">
+                <tr t-foreach="module_stats" t-as="stat">
+                  <td><t t-esc="stat.create_date.date()" /></td>
+                  <td><t t-esc="stat.build_id" /></td>
+                  <td><t t-esc="stat.value" /></td>
+                </tr>
+              </table>
+            </div>
+            <div t-if="not module_stats" class="col-md-12 alert alert-warning">No stats records found for this module</div>
+          </div>
+        </div>
+      </t>
+      <script type="text/javascript" src="/runbot/static/src/js/stats.js"></script>
+    </template>
+  </data>
+</odoo>
