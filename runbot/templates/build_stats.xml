@@ -36,30 +36,24 @@
       </t>
     </template>
 
-    <template id="runbot.module_stats">
+    <template id="runbot.modules_stats">
       <t t-call='website.layout'>
-        <div class="container">
-        <canvas id="canvas"></canvas>
-          <div class="row">
-            <div class="col-md-4">
-                <div class="bg-success-light">
-                  <b>Bundle:</b><t t-esc="bundle.name"/><br/>
-                  <b>Config:</b><t t-esc="params.config_id.name"/><br/>
-                  <b>Trigger:</b><t t-esc="params.trigger_id.name"/>
-                </div>
-            </div>
-            <div class="col-md-8">
-              <h3><t t-esc="category.title().replace('_', ' ')"/> <t t-esc="module"/></h3>
-              <table class="table table-condensed table-responsive table-stripped">
-                <tr t-foreach="module_stats" t-as="stat">
-                  <td><t t-esc="stat.create_date.date()" /></td>
-                  <td><t t-esc="stat.build_id" /></td>
-                  <td><t t-esc="stat.value" /></td>
-                </tr>
-              </table>
-            </div>
-            <div t-if="not module_stats" class="col-md-12 alert alert-warning">No stats records found for this module</div>
+        <div class="container-fluid">
+          <div class="bg-success-light">
+            <b>Bundle:</b><t t-esc="bundle.name"/><br/>
+            <b>Config:</b><t t-esc="params.config_id.name"/><br/>
+            <b>Trigger:</b><t t-esc="params.trigger_id.name"/>
+            <b>Category:</b>
+            <select id="category_selector" class="form-select" aria-label="Stat Category">
+              <option t-foreach="stats_categories" t-as="category" t-attf-value="{{category}}"><t t-esc="category.replace('_',' ').title()"/></option>
+            </select>
+            <b>Mode: </b>
+            <select id="mode_selector" class="form-select" aria-label="Display mode">
+              <option selected="selected" value="normal">Normal</option>
+              <option value="difference">Difference</option>
+            </select>
           </div>
+        <canvas id="canvas"></canvas>
         </div>
       </t>
       <script type="text/javascript" src="/runbot/static/src/js/stats.js"></script>
