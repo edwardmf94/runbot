@@ -21,11 +21,6 @@
                 <table class="table table-condensed table-responsive table-stripped">
                   <tr t-foreach="build_stats[category].keys()" t-as="module">
                     <td><t t-esc="module"/></td>
-                    <td>
-                      <t t-foreach="bundles" t-as="bundle">
-                        <a t-attf-href="/runbot/stats/{{module}}/{{category}}/{{bundle.id}}/{{build.params_id.id}}" t-attf-title="{{module}} stats in bundle {{bundle.name}}"><i class="fa fa-bar-chart"/></a>
-                      </t>
-                    </td>
                     <td><t t-esc="build_stats[category][module]"/></td>
                   </tr>
                 </table>
@@ -38,12 +33,13 @@
 
     <template id="runbot.modules_stats">
       <t t-call='website.layout'>
+        <input type="hidden" id="bundle_id" t-att-value="bundle.id"/>
+        <input type="hidden" id="trigger_id" t-att-value="trigger.id"/>
         <div class="container-fluid">
           <div class="bg-success-light">
             <b>Bundle:</b><t t-esc="bundle.name"/><br/>
-            <b>Config:</b><t t-esc="params.config_id.name"/><br/>
-            <b>Trigger:</b><t t-esc="params.trigger_id.name"/>
-            <b>Category:</b>
+            <b>Trigger:</b><t t-esc="trigger.name"/>
+            <b>Stat Category:</b>
             <select id="category_selector" class="form-select" aria-label="Stat Category">
               <option t-foreach="stats_categories" t-as="category" t-attf-value="{{category}}"><t t-esc="category.replace('_',' ').title()"/></option>
             </select>

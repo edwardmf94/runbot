@@ -427,21 +427,16 @@ class Runbot(Controller):
 
         return {build.id : {stat.key.split('.')[1]: stat.value for stat in build.stat_ids if stat.key.startswith(key_category)} for build in builds}
 
-    @route(['/runbot/stats/<string:category>/<int:bundle_id>/<int:params_id>'], type='http', auth="public", website=True)
-    def modules_stats(self, category, bundle_id, params_id, search=None, **post):
+    @route(['/runbot/stats/<model("runbot.bundle"):bundle>/<model("runbot.trigger"):trigger>'], type='http', auth="public", website=True)
+    def modules_stats(self, bundle, trigger, search=None, **post):
         """Modules statistics"""
-
-        params = request.env['runbot.build.params'].browse(params_id)
-        bundle = request.env['runbot.bundle'].browse(bundle_id)
-        if not params.exists() or not bundle.exists():
-            return request.not_found()
 
         categories = request.env['runbot.build.stat.regex'].search([]).mapped('name')
 
         context = {
             'stats_categories': categories,
             'bundle': bundle,
-            'params': params,
+            'trigger': trigger,
         }
 
         return request.render("runbot.modules_stats", context)

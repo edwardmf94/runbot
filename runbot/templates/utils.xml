@@ -169,6 +169,9 @@
                 <a t-if="not bu" groups="runbot.group_user" class="btn btn-default" title="Create build" t-attf-href="/runbot/batch/slot/{{slot.id}}/build">
                     <i class="fa fa-play fa-fw"/>
                 </a>
+                <a title="Bundle Comparative Stats Charts" class="btn btn-default" t-attf-href="/runbot/stats/{{slot.batch_id.bundle_id.id}}/{{slot.trigger_id.id}}">
+                    <i class="fa fa-bar-chart"/>
+                </a>
             </div>
         </template>
 

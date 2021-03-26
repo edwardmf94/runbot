@@ -103,17 +103,19 @@ function process_chart(){
 
 function fetch_stats(fetch_url) {
   fetch(fetch_url, {}, function(result){
-    config.result = result;
-    process_chart();
-    var ctx = document.getElementById('canvas').getContext('2d');
-    window.statsChart = new Chart(ctx, config);
+    if (Object.keys(result).length > 0) {
+        config.result = result;
+        process_chart();
+        var ctx = document.getElementById('canvas').getContext('2d');
+        window.statsChart = new Chart(ctx, config);
+    } else console.log('No data');
   });
 };
 
 function compute_url(){
     var stat_category = document.getElementById('category_selector').value;
-    var bundle_id = 1;
-    var trigger_id = 3;
+    var bundle_id = document.getElementById('bundle_id').value;
+    var trigger_id = document.getElementById('trigger_id').value;
     return '/runbot/stats/' + bundle_id + '/' + trigger_id + '/' + stat_category
 };
 
