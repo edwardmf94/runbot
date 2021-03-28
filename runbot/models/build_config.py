@@ -313,10 +313,10 @@ class ConfigStep(models.Model):
 
                 temp_file=tfile.NamedTemporaryFile(mode="w",suffix=".pem",prefix='ppk_%s' % build.id)
                 PKEY=temp_file.name
-                temp_file.write(build.params_id.config_id.os_pkey)
+                temp_file.write(build.params_id.config_id.host_id.os_pkey)
                 temp_file.close()
                 build._log('_run_linux_command', 'Create Temp Private key file %s' % PKEY, level='INFO')
-                ssh.connect(build.params_id.config_id.host_id.name, username=build.params_id.config_id.os_username, key_filename=PKEY)
+                ssh.connect(build.params_id.config_id.host_id.name, username=build.params_id.config_id.host_id.os_username, key_filename=PKEY)
                 stdin, stdout, stderr = ssh.exec_command('cd /opt/bash; ./install_odoo_11.sh community demo66 8097 admin1')
                 build._log('_run_linux_command', 'Command execution: %s' % stdout.readlines(), level='INFO')
                 ssh.close()
