@@ -6,6 +6,8 @@ import fnmatch
 import re
 import shlex
 import time
+import paramiko
+import tempfile as tfile
 from unidiff import PatchSet
 from ..common import now, grep, time2str, rfind, s2human, os, RunbotException
 from ..container import docker_get_gateway_ip, Command
@@ -302,6 +304,24 @@ class ConfigStep(models.Model):
             return False
         self.ensure_one()
         return self.job_type in ('install_odoo', 'run_odoo', 'restore', 'test_upgrade') or (self.job_type == 'python' and ('docker_params =' in self.python_code or '_run_' in self.python_code))
+
+    def _run_linux_command(self, build, log_path):
+        if build.params_id.config_id.host_id:
+            try:
+                ssh = paramiko.SSHClient()
+                ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+                temp_file=tfile.NamedTemporaryFile(mode="w",suffix=".pem",prefix='ppk_%s' % build.id)
+                PKEY=temp_file.name
+                temp_file.write(build.params_id.config_id.os_pkey)
+                temp_file.close()
+                build._log('_run_linux_command', 'Create Temp Private key file %s' % PKEY, level='INFO')
+                ssh.connect(build.params_id.config_id.host_id.name, username=build.params_id.config_id.os_username, key_filename=PKEY)
+                stdin, stdout, stderr = ssh.exec_command('cd /opt/bash; ./install_odoo_11.sh community demo66 8097 admin1')
+                build._log('_run_linux_command', 'Command execution: %s' % stdout.readlines(), level='INFO')
+                ssh.close()
+            except Exception as e:
+                build._log("run", str(e), level='ERROR')
 
     def _run_run_odoo(self, build, log_path, force=False):
         if not force:
