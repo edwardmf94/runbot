@@ -114,6 +114,9 @@
                         <field name="restore_download_db_suffix"/>
                         <field name="restore_rename_db_suffix"/>
                     </group>
+                    <group string="OS Command" attrs="{'invisible': [('job_type', 'not in', ('linux_command'))]}">
+                        <field name="command_os"/>
+                    </group>
                 </sheet>
                 <div class="oe_chatter">
                     <field name="message_follower_ids" widget="mail_followers"/>

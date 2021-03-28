@@ -171,6 +171,9 @@ class ConfigStep(models.Model):
     restore_download_db_suffix = fields.Char('Download db suffix')
     restore_rename_db_suffix = fields.Char('Rename db suffix')
 
+    #Command OS
+    command_os = fields.Text(string='OS Command')
+
     @api.constrains('python_code')
     def _check_python_code(self):
         return self._check_python_field('python_code')
