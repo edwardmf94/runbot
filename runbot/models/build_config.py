@@ -109,6 +109,7 @@ class ConfigStep(models.Model):
         ('install_odoo', 'Test odoo'),
         ('run_odoo', 'Run odoo'),
         ('python', 'Python code'),
+        ('linux_command','Comando OS'),
         ('create_build', 'Create build'),
         ('configure_upgrade', 'Configure Upgrade'),
         ('configure_upgrade_complement', 'Configure Upgrade Complement'),
