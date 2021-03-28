@@ -8,7 +8,7 @@
             <form string="Host">
                 <sheet>
                     <group>
-                        <field name="name" readonly='1'/>
+                        <field name="name"/>
                         <field name="disp_name"/>
                         <field name="active"/>
                         <field name="last_start_loop" readonly='1'/>
@@ -18,6 +18,9 @@
                         <field name="nb_worker"/>
                         <field name="last_exception" readonly='1'/>
                         <field name="exception_count" readonly='1'/>
+                        <field name="build_type"/>
+                        <field name="os_username"/>
+                        <field name="os_pkey"/>
                     </group>
                 </sheet>
                 <div class="oe_chatter">

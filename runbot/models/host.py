@@ -28,6 +28,7 @@ class Host(models.Model):
     last_exception = fields.Char('Last exception')
     exception_count = fields.Integer('Exception count')
     psql_conn_count = fields.Integer('SQL connections count', default=0)
+    build_type = fields.Selection([('docker','Docker'),('shared_service','Servicio SO')], default='docker', string='Tipo de Instancia')
 
     def _compute_nb(self):
         groups = self.env['runbot.build'].read_group(
