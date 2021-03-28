@@ -12,6 +12,7 @@
                     <group>
                         <field name="name"/>
                         <field name="description"/>
+                        <field name="build_type"/>
                         <field name="step_order_ids">
                             <tree string="Step list" editable="bottom">
                                 <field name="step_id"/>
@@ -20,7 +21,6 @@
                         </field>
                         <field name="protected" groups="base.group_no_one"/>
                         <field name="group" groups="base.group_no_one"/>
-                        <field name="build_type"/>
                     </group>
                 </sheet>
                 <div class="oe_chatter">
