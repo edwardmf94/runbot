@@ -33,6 +33,7 @@ class Config(models.Model):
     protected = fields.Boolean('Protected', default=False, tracking=True)
     group = fields.Many2one('runbot.build.config', 'Configuration group', help="Group of config's and config steps")
     group_name = fields.Char('Group name', related='group.name')
+    build_type = fields.Selection([('docker','Docker'),('shared_service','Servicio SO')], string='Tipo de Instancia')
 
     @api.model_create_single
     def create(self, values):

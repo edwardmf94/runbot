@@ -20,6 +20,7 @@
                         </field>
                         <field name="protected" groups="base.group_no_one"/>
                         <field name="group" groups="base.group_no_one"/>
+                        <field name="build_type"/>
                     </group>
                 </sheet>
                 <div class="oe_chatter">
