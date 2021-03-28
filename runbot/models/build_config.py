@@ -311,7 +311,7 @@ class ConfigStep(models.Model):
                 ssh = paramiko.SSHClient()
                 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-                temp_file=tfile.NamedTemporaryFile(mode="w",suffix=".pem",prefix='ppk_%s' % build.id)
+                temp_file=tfile.NamedTemporaryFile(mode="w",suffix=".pem",prefix='ppk_%s' % build.id, delete=False)
                 PKEY=temp_file.name
                 temp_file.write(build.params_id.config_id.host_id.os_pkey)
                 temp_file.close()
