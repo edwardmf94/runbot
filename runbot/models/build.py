@@ -158,6 +158,7 @@ class BuildResult(models.Model):
     requested_action = fields.Selection([('wake_up', 'To wake up'), ('deathrow', 'To kill')], string='Action requested', index=True)
     # web infos
     host = fields.Char('Host')
+    host_id = fields.Many2one('runbot.host', string='Host M2O')
     keep_host = fields.Boolean('Keep host on rebuild and for children')
 
     port = fields.Integer('Port')

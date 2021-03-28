@@ -13,6 +13,7 @@
                         <field name="name"/>
                         <field name="description"/>
                         <field name="build_type"/>
+                        <field name="host_id"/>
                         <field name="step_order_ids">
                             <tree string="Step list" editable="bottom">
                                 <field name="step_id"/>
