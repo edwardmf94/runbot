@@ -324,7 +324,11 @@ class ConfigStep(models.Model):
                     service_port = current_port[0].port+1
                 instance_name = '%s-%s'% (build.params_id.project_id.name.lower(),build.dest.lower())
                 master_password = 'admin1'
-                stdin, stdout, stderr = ssh.exec_command("cd /opt/bash; ./install_odoo_11.sh {odoo_dist} {instance_name} {service_port} {master_password}".format(odoo_dist=odoo_dist, instance_name=instance_name, service_port=service_port, master_password=master_password))
+                build._log('_run_linux_command', 'Create Variable (odoo_dist) %s' % odoo_dist, level='INFO')
+                build._log('_run_linux_command', 'Create Variable (instance_name) %s' % instance_name, level='INFO')
+                build._log('_run_linux_command', 'Create Variable (service_port) %s' % service_port, level='INFO')
+                build._log('_run_linux_command', 'Create Variable (master_password) %s' % master_password, level='INFO')
+                stdin, stdout, stderr = ssh.exec_command(self.command_os.format(odoo_dist=odoo_dist, instance_name=instance_name, service_port=service_port, master_password=master_password))
                 build._log('_run_linux_command', 'Command execution: %s' % stdout.readlines(), level='INFO')
                 ssh.close()
             except Exception as e:
