@@ -317,7 +317,14 @@ class ConfigStep(models.Model):
                 temp_file.close()
                 build._log('_run_linux_command', 'Create Temp Private key file %s' % PKEY, level='INFO')
                 ssh.connect(build.params_id.config_id.host_id.name, username=build.params_id.config_id.host_id.os_username, key_filename=PKEY)
-                stdin, stdout, stderr = ssh.exec_command('cd /opt/bash; ./install_odoo_11.sh community demo66 8097 admin1')
+                odoo_dist = 'community'
+                service_port = 8069
+                current_port = self.env['runbot.build'].search([('host','=',build.params_id.config_id.host_id.name),('port','>=',8069)], order='port desc')
+                if current_port:
+                    service_port = current_port[0].port+1
+                instance_name = '%s-%s'% (build.params_id.project_id.name.lower(),build.dest.lower())
+                master_password = 'admin1'
+                stdin, stdout, stderr = ssh.exec_command("cd /opt/bash; ./install_odoo_11.sh {odoo_dist} {instance_name} {service_port} {master_password}".format(odoo_dist=odoo_dist, instance_name=instance_name, service_port=service_port, master_password=master_password))
                 build._log('_run_linux_command', 'Command execution: %s' % stdout.readlines(), level='INFO')
                 ssh.close()
             except Exception as e:
