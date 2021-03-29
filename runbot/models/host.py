@@ -31,6 +31,7 @@ class Host(models.Model):
     build_type = fields.Selection([('docker','Docker'),('shared_service','Servicio SO')], default='docker', string='Tipo de Instancia')
     os_username = fields.Char('User OS')
     os_pkey = fields.Text('Pkey OS')
+    is_available = fields.Boolean(default=True)
 
     def _compute_nb(self):
         groups = self.env['runbot.build'].read_group(
@@ -97,8 +98,9 @@ class Host(models.Model):
 
     @api.model
     def _get_current(self, suffix=''):
-        name = '%s%s' % (fqdn(), suffix)
-        return self.search([('name', '=', name)]) or self.create({'name': name})
+        #name = '%s%s' % (fqdn(), suffix)
+        #return self.search([('name', '=', name)]) or self.create({'name': name})
+        return self.search([('is_available','=',True)])
 
     def get_running_max(self):
         icp = self.env['ir.config_parameter']
